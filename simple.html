@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>OUTR Lab Cover – Quick Maker</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Playfair+Display:wght@600;700&family=Plus+Jakarta+Sans:wght@500;600;700&display=swap" rel="stylesheet">
+
+<link rel="icon" type="image/png" href="pngfavicon.png">
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
+
+<style>
+/* =====================================================================
+   ★ EDIT HERE — fixed look of the cover (students cannot change these)
+   ===================================================================== */
+:root {
+  /* colours */
+  --c-bg:#FFFDFA;
+  --c-univ:#8B3A1A;
+  --c-loc:#1D4ED8;
+  --c-school:#2E7D32;
+  --c-title:#1D4ED8;
+  --c-meta:#111827;
+  --c-party:#0B5FA5;
+  --c-detail:#111827;
+  --c-border:#000000;
+
+  /* fonts — Professional Modern Academic Styling */
+  --ff-univ:'Cinzel', serif;
+  --ff-loc:'Plus Jakarta Sans', sans-serif;
+  --ff-school:'Plus Jakarta Sans', sans-serif;
+  --ff-title:'Playfair Display', serif;
+  --ff-meta:'Plus Jakarta Sans', sans-serif;
+  --ff-party:'Plus Jakarta Sans', sans-serif;
+  --ff-detail:'Plus Jakarta Sans', sans-serif;
+
+  /* sizes (px, on an A4 page 794 × 1123) */
+  --fs-univ:30px;
+  --fs-loc:15px;
+  --fs-school:15px;
+  --fs-logo:220px;
+  --fs-title:24px;
+  --fs-meta:14px;
+  --fs-party:15px;
+  --fs-detail:15px;
+  --border-w:4px;
+}
+
+/* =====================================================================
+   Tool interface (not part of the cover)
+   ===================================================================== */
+:root {
+  --ui-bg:#F4F6FA; --ui-card:#FFFFFF; --ui-line:#DDE3EC; --ui-text:#1B2433;
+  --ui-muted:#5F6B7E; --ui-accent:#1D4ED8; --ui-accent-dark:#1740B0; --ui-warn:#B42318;
+}
+*, *::before, *::after { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+html, body { margin:0; padding:0; }
+body {
+  font-family:'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  background:var(--ui-bg); color:var(--ui-text);
+  -webkit-font-smoothing:antialiased; min-height:100vh;
+}
+button, input, select { font-family:inherit; font-size:16px; }
+
+header.bar {
+  background:var(--ui-card); border-bottom:1px solid var(--ui-line);
+  padding:12px max(16px, env(safe-area-inset-right)) 12px max(16px, env(safe-area-inset-left));
+}
+.bar-in { max-width:1180px; margin:0 auto; display:flex; align-items:center; gap:12px; }
+.bar-in img { width:40px; height:40px; object-fit:contain; border-radius:8px; }
+.bar-in h1 { margin:0; font-size:17px; font-weight:700; line-height:1.2; }
+.bar-in p  { margin:2px 0 0; font-size:13px; color:var(--ui-muted); }
+
+main {
+  max-width:1180px; margin:0 auto; padding:20px 16px 48px;
+  display:grid; grid-template-columns:380px minmax(0,1fr); gap:24px; align-items:start;
+}
+@media (max-width: 900px) { main { grid-template-columns:1fr; } }
+
+.panel {
+  background:var(--ui-card); border:1px solid var(--ui-line); border-radius:14px; padding:18px;
+}
+.panel h2 { margin:0 0 14px; font-size:15px; font-weight:700; }
+.group-title { margin:18px 0 10px; font-size:13px; font-weight:700; color:var(--ui-accent); }
+.panel h2 + .group-title { margin-top:0; }
+
+.field { margin-bottom:12px; }
+.field label { display:block; font-size:13px; font-weight:600; margin-bottom:5px; color:#334155; }
+.field .opt { font-weight:400; color:var(--ui-muted); }
+.input {
+  width:100%; padding:11px 12px; border:1.5px solid var(--ui-line); border-radius:10px;
+  background:#fff; color:var(--ui-text); transition:border-color .15s, box-shadow .15s;
+}
+.input:focus { outline:none; border-color:var(--ui-accent); box-shadow:0 0 0 3px rgba(29,78,216,.16); }
+.input.missing { border-color:var(--ui-warn); box-shadow:0 0 0 3px rgba(180,35,24,.12); }
+.row2 { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.row3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; }
+
+.actions { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:16px; }
+.btn {
+  border:1.5px solid var(--ui-line); background:#fff; color:var(--ui-text);
+  border-radius:10px; padding:12px 14px; font-weight:600; cursor:pointer; touch-action:manipulation;
+}
+.btn:hover { background:#F1F5FB; }
+.btn:focus-visible { outline:3px solid rgba(29,78,216,.35); outline-offset:2px; }
+.btn:disabled { opacity:.6; cursor:wait; }
+.btn.primary { background:var(--ui-accent); border-color:var(--ui-accent); color:#fff; }
+.btn.primary:hover { background:var(--ui-accent-dark); }
+.btn.wide { grid-column:1 / -1; }
+.link-btn {
+  background:none; border:none; color:var(--ui-muted); font-size:13px; text-decoration:underline;
+  cursor:pointer; padding:10px 0 0; touch-action:manipulation;
+}
+#note { margin:12px 0 0; font-size:13.5px; line-height:1.45; color:var(--ui-muted); min-height:20px; }
+#note.warn { color:var(--ui-warn); font-weight:600; }
+#note.ok   { color:#0F7A3E; font-weight:600; }
+
+.preview-head { display:flex; align-items:baseline; justify-content:space-between; margin-bottom:10px; }
+.preview-head h2 { margin:0; font-size:15px; }
+.preview-head span { font-size:13px; color:var(--ui-muted); }
+#previewBox { position:relative; width:100%; overflow:hidden; border-radius:6px; box-shadow:0 10px 30px rgba(15,23,42,.18); background:#fff; }
+#scaler { position:absolute; top:0; left:0; width:794px; height:1123px; transform-origin:top left; }
+
+/* =====================================================================
+   The cover page (A4 at 794 × 1123 px)
+   ===================================================================== */
+#page {
+  width:794px; height:1123px; background:var(--c-bg); padding:44px; display:flex; color:#111827;
+}
+.frame-outer { flex:1; border:var(--border-w) solid var(--c-border); padding:10px; display:flex; }
+.frame-inner {
+  flex:1; border:calc(var(--border-w) * .5) solid var(--c-border);
+  padding:40px 44px; display:flex; flex-direction:column;
+  justify-content:space-between; align-items:center; text-align:center;
+}
+.p-head { width:100%; }
+.p-univ { margin:0; font-family:var(--ff-univ); font-weight:700; font-size:var(--fs-univ); color:var(--c-univ); letter-spacing:0.8px; line-height:1.25; }
+.p-loc { margin:10px 0 0; font-family:var(--ff-loc); font-weight:700; font-size:var(--fs-loc); color:var(--c-loc); letter-spacing:3px; }
+.p-school { margin:8px 0 0; font-family:var(--ff-school); font-weight:700; font-size:var(--fs-school); color:var(--c-school); letter-spacing:1px; }
+.logo-wrap { display:flex; align-items:center; justify-content:center; margin:12px 0; }
+.p-logo { width:var(--fs-logo); height:var(--fs-logo); object-fit:contain; }
+.p-title { margin:0; font-family:var(--ff-title); font-weight:700; font-size:var(--fs-title); color:var(--c-title); text-transform:uppercase; letter-spacing:.8px; line-height:1.35; }
+.p-meta { margin:10px 0 0; font-family:var(--ff-meta); font-weight:600; font-size:var(--fs-meta); color:var(--c-meta); letter-spacing:0.3px; }
+.parties { width:100%; display:grid; grid-template-columns:1fr 1fr; gap:24px; text-align:left; }
+.parties.one { grid-template-columns:1fr; }
+.party-head { margin:0 0 10px; font-family:var(--ff-party); font-weight:700; font-size:var(--fs-party); color:var(--c-party); text-transform:uppercase; letter-spacing:1px; }
+.p-detail { font-family:var(--ff-detail); font-size:var(--fs-detail); line-height:1.8; color:var(--c-detail); font-weight:600; }
+.p-detail p { margin:0; }
+.p-detail .val { font-weight:500; }
+
+/* =====================================================================
+   Print: only the cover, full A4
+   ===================================================================== */
+@media print {
+  @page { size:A4; margin:0; }
+  body { background:#fff; }
+  header.bar, .panel, .preview-head { display:none !important; }
+  main { display:block; padding:0; max-width:none; }
+  #previewBox { position:static; box-shadow:none; border-radius:0; overflow:visible; height:auto !important; }
+  #scaler { position:static; transform:none !important; }
+  #page { -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+}
+</style>
+</head>
+<body>
+
+<header class="bar">
+  <div class="bar-in">
+    <img src="logooutr.jpg" alt="OUTR logo">
+    <div>
+      <h1>OUTR Lab Cover</h1>
+      <p>Fill in the details, download, done. Takes about 2 minutes.</p>
+    </div>
+  </div>
+</header>
+
+<main>
+  <!-- ================= FORM ================= -->
+  <section class="panel" aria-label="Your details">
+    <h2>Your details</h2>
+
+    <h3 class="group-title">Record</h3>
+    <div class="field">
+      <label for="recordType">Record type</label>
+      <select id="recordType" class="input"></select>
+    </div>
+    <div class="field">
+      <label for="subjectName">Subject name</label>
+      <input id="subjectName" class="input" type="text" placeholder="Power Electronics" autocapitalize="words" autocomplete="off">
+    </div>
+    <div class="field">
+      <label for="subjectCode">Subject code <span class="opt">(optional)</span></label>
+      <input id="subjectCode" class="input" type="text" placeholder="EE-301" autocapitalize="characters" autocomplete="off">
+    </div>
+    <div class="field">
+      <label for="school">School</label>
+      <select id="school" class="input"></select>
+    </div>
+
+    <h3 class="group-title">Submitted to</h3>
+    <div class="field">
+      <label for="teacherName">Teacher name</label>
+      <input id="teacherName" class="input" type="text" placeholder="Dr. Professor Name" autocapitalize="words" autocomplete="off">
+    </div>
+    <div class="field">
+      <label for="teacherDesig">Designation <span class="opt">(optional)</span></label>
+      <input id="teacherDesig" class="input" type="text" placeholder="Assistant Professor" autocapitalize="words" autocomplete="off">
+    </div>
+
+    <h3 class="group-title">Submitted by</h3>
+    <div class="field">
+      <label for="studentName">Your name</label>
+      <input id="studentName" class="input" type="text" placeholder="Your full name" autocapitalize="words" autocomplete="off">
+    </div>
+    <div class="row2">
+      <div class="field">
+        <label for="regdNo">Regd. no.</label>
+        <input id="regdNo" class="input" type="text" placeholder="2501234567" autocapitalize="characters" autocomplete="off">
+      </div>
+      <div class="field">
+        <label for="semester">Semester</label>
+        <select id="semester" class="input"></select>
+      </div>
+    </div>
+    <div class="field">
+      <label for="branch">Branch</label>
+      <select id="branch" class="input"></select>
+    </div>
+    <div class="row3">
+      <div class="field">
+        <label for="section">Section <span class="opt">(opt.)</span></label>
+        <input id="section" class="input" type="text" placeholder="A" autocapitalize="characters" autocomplete="off">
+      </div>
+      <div class="field">
+        <label for="group">Group <span class="opt">(opt.)</span></label>
+        <input id="group" class="input" type="text" placeholder="G1" autocapitalize="characters" autocomplete="off">
+      </div>
+      <div class="field">
+        <label for="subGroup">Sub-group <span class="opt">(opt.)</span></label>
+        <input id="subGroup" class="input" type="text" placeholder="SG1" autocapitalize="characters" autocomplete="off">
+      </div>
+    </div>
+
+    <div class="actions">
+      <button type="button" id="pdfBtn" class="btn primary">Download PDF</button>
+      <button type="button" id="pngBtn" class="btn">Download image</button>
+      <button type="button" id="printBtn" class="btn wide">Print</button>
+    </div>
+    <p id="note" role="status" aria-live="polite"></p>
+    <button type="button" id="clearBtn" class="link-btn">Clear my details</button>
+  </section>
+
+  <!-- ================= PREVIEW ================= -->
+  <section aria-label="Cover preview">
+    <div class="preview-head"><h2>Preview</h2><span>A4 · updates as you type</span></div>
+    <div id="previewBox">
+      <div id="scaler">
+        <div id="page">
+          <div class="frame-outer"><div class="frame-inner">
+
+            <div class="p-head">
+              <h1 class="p-univ" id="p-univ"></h1>
+              <div class="p-loc" id="p-loc"></div>
+              <div class="p-school" id="p-school"></div>
+            </div>
+
+            <div class="logo-wrap"><img id="p-logo" class="p-logo" alt="OUTR logo"></div>
+
+            <div style="width:100%">
+              <h2 class="p-title" id="p-title"></h2>
+              <p class="p-meta" id="p-meta"></p>
+            </div>
+
+            <div class="parties" id="parties">
+              <div id="toWrap">
+                <h3 class="party-head">Submitted to :-</h3>
+                <div class="p-detail" id="p-to"></div>
+              </div>
+              <div id="byWrap">
+                <h3 class="party-head">Submitted by :-</h3>
+                <div class="p-detail" id="p-by"></div>
+              </div>
+            </div>
+
+          </div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script>
+(function () {
+  'use strict';
+
+  /* =====================================================================
+     ★ EDIT HERE — fixed content for OUTR students
+     ===================================================================== */
+  const CONFIG = {
+    university : 'ODISHA UNIVERSITY OF TECHNOLOGY AND RESEARCH',
+    location   : 'BHUBANESWAR',
+    logo       : 'logooutr.jpg',          // keep this file in the same folder as this page
+    session    : '',                      // session removed
+
+    recordTypes: ['Lab Record', 'Assignment Record', 'Practical File', 'Project Report'],
+
+    schools: [
+      'Electrical Sciences', 'Computer Science', 'Mechanical Sciences', 'Civil Engineering',
+      'Electronics and Communication', 'Biotechnology', 'Textile Engineering',
+      'Chemical Engineering', 'Applied Sciences'
+    ],
+    schoolPrefix: 'School of',            // cover shows e.g. "SCHOOL OF ELECTRICAL SCIENCES"
+
+    branches: [
+      'Power System Engineering', 'Electrical Engineering', 'Computer Science and Engineering',
+      'Electronics and Communication Engineering', 'Mechanical Engineering', 'Civil Engineering',
+      'Chemical Engineering', 'Biotechnology', 'Textile Engineering', 'Information Technology'
+    ],
+
+    semesters: ['1st', '2nd', '3rd', '4th', '5th', '6th', '7th', '8th']
+  };
+
+  /* ===================================================================== */
+
+  const $ = id => document.getElementById(id);
+  const val = id => $(id).value.trim();
+  const STORE_KEY = 'outr_quick_cover_v1';
+  const FIELDS = ['recordType','subjectName','subjectCode','school','teacherName','teacherDesig',
+                  'studentName','regdNo','semester','branch','section','group','subGroup'];
+  const REQUIRED = [
+    ['subjectName','Subject name'], ['teacherName','Teacher name'],
+    ['studentName','Your name'], ['regdNo','Regd. no.']
+  ];
+
+  function fill(id, items) {
+    $(id).innerHTML = items.map(t => '<option value="' + t.replace(/"/g, '&quot;') + '">' + t + '</option>').join('');
+  }
+  fill('recordType', CONFIG.recordTypes);
+  fill('school', CONFIG.schools);
+  fill('branch', CONFIG.branches);
+  fill('semester', CONFIG.semesters);
+
+  /* saved details, so a student never retypes */
+  function save() {
+    try {
+      const o = {}; FIELDS.forEach(f => o[f] = $(f).value);
+      localStorage.setItem(STORE_KEY, JSON.stringify(o));
+    } catch (e) {}
+  }
+  function load() {
+    try {
+      const o = JSON.parse(localStorage.getItem(STORE_KEY) || '{}');
+      FIELDS.forEach(f => { if (typeof o[f] === 'string') $(f).value = o[f]; });
+    } catch (e) {}
+  }
+
+  /* fixed cover text */
+  $('p-univ').textContent = CONFIG.university;
+  $('p-loc').textContent = CONFIG.location;
+  $('p-logo').src = CONFIG.logo;
+
+  function line(label, value) {
+    const p = document.createElement('p');
+    if (label) p.appendChild(document.createTextNode(label + ' '));
+    const v = document.createElement('span');
+    if (label) v.className = 'val';
+    v.textContent = value;
+    p.appendChild(v);
+    return p;
+  }
+
+  function render() {
+    const school = val('school');
+    const schoolEl = $('p-school');
+    schoolEl.textContent = school ? (CONFIG.schoolPrefix + ' ' + school).toUpperCase() : '';
+    schoolEl.style.display = school ? '' : 'none';
+
+    const subject = val('subjectName');
+    $('p-title').textContent = (subject ? subject + ' ' : '') + val('recordType');
+
+    const meta = [];
+    if (val('subjectCode')) meta.push('Subject Code: ' + val('subjectCode'));
+    $('p-meta').textContent = meta.join('   |   ');
+    $('p-meta').style.display = meta.length ? '' : 'none';
+
+    const to = $('p-to'); to.replaceChildren();
+    if (val('teacherName'))  to.appendChild(line('', val('teacherName')));
+    if (val('teacherDesig')) to.appendChild(line('', val('teacherDesig')));
+    const hasTo = !!val('teacherName');
+    $('toWrap').style.display = hasTo ? '' : 'none';
+    $('parties').classList.toggle('one', !hasTo);
+
+    const by = $('p-by'); by.replaceChildren();
+    if (val('studentName')) by.appendChild(line('NAME:', val('studentName')));
+    if (val('regdNo'))      by.appendChild(line('REGD NO:', val('regdNo')));
+    if (val('branch'))      by.appendChild(line('BRANCH:', val('branch').toUpperCase()));
+    if (val('semester'))    by.appendChild(line('SEMESTER:', val('semester')));
+    if (val('section'))     by.appendChild(line('SECTION:', val('section')));
+    if (val('group'))       by.appendChild(line('GROUP:', val('group')));
+    if (val('subGroup'))    by.appendChild(line('SUB-GROUP:', val('subGroup')));
+  }
+
+  function fit() {
+    const box = $('previewBox');
+    const s = Math.min(1, box.clientWidth / 794);
+    $('scaler').style.transform = 'scale(' + s + ')';
+    box.style.height = Math.round(1123 * s) + 'px';
+  }
+
+  const note = $('note');
+  function say(text, kind) { note.textContent = text; note.className = kind || ''; }
+  function missingFields() { return REQUIRED.filter(([id]) => !val(id)); }
+  function markMissing(list) {
+    REQUIRED.forEach(([id]) => $(id).classList.remove('missing'));
+    list.forEach(([id]) => $(id).classList.add('missing'));
+  }
+  function guard() {
+    const m = missingFields();
+    markMissing(m);
+    if (m.length) {
+      say('Please fill: ' + m.map(x => x[1]).join(', ') + '.', 'warn');
+      $(m[0][0]).focus();
+      return false;
+    }
+    say('');
+    return true;
+  }
+
+  function fileName() {
+    return ['OUTR', val('recordType'), val('subjectName') || 'Cover', val('studentName')]
+      .filter(Boolean).join('_').replace(/[^\w\-]+/g, '_').replace(/_+/g, '_').slice(0, 80);
+  }
+
+  async function capture() {
+    if (!window.html2canvas) throw new Error('Export tool did not load. Check your internet and try again.');
+    if (document.fonts && document.fonts.ready) await document.fonts.ready;
+    const img = $('p-logo');
+    if (!img.complete || !img.naturalWidth) throw new Error('Logo file (' + CONFIG.logo + ') was not found next to this page.');
+    const canvas = await html2canvas($('page'), {
+      scale: 3, backgroundColor: null, useCORS: true, logging: false,
+      width: 794, height: 1123, windowWidth: 794,
+      onclone: doc => {
+        doc.getElementById('scaler').style.transform = 'none';
+        doc.getElementById('previewBox').style.overflow = 'visible';
+      }
+    });
+    try { canvas.toDataURL('image/png'); }
+    catch (e) { throw new Error('The browser blocked the logo. Open this page from the website, not as a local file.'); }
+    return canvas;
+  }
+
+  async function busy(btn, label, fn) {
+    const old = btn.textContent; btn.textContent = label; btn.disabled = true;
+    try { await fn(); } finally { btn.textContent = old; btn.disabled = false; }
+  }
+
+  $('pdfBtn').addEventListener('click', () => {
+    if (!guard()) return;
+    busy($('pdfBtn'), 'Making PDF…', async () => {
+      try {
+        if (!(window.jspdf && window.jspdf.jsPDF)) throw new Error('PDF tool did not load. Check your internet and try again.');
+        const canvas = await capture();
+        const pdf = new window.jspdf.jsPDF({ orientation:'portrait', unit:'mm', format:'a4', compress:true });
+        pdf.addImage(canvas.toDataURL('image/jpeg', 0.95), 'JPEG', 0, 0, 210, 297);
+        pdf.save(fileName() + '.pdf');
+        say('PDF downloaded.', 'ok');
+      } catch (err) { say(err.message, 'warn'); }
+    });
+  });
+
+  $('pngBtn').addEventListener('click', () => {
+    if (!guard()) return;
+    busy($('pngBtn'), 'Making image…', async () => {
+      try {
+        const canvas = await capture();
+        const a = document.createElement('a');
+        a.href = canvas.toDataURL('image/png');
+        a.download = fileName() + '.png';
+        document.body.appendChild(a); a.click(); a.remove();
+        say('Image downloaded.', 'ok');
+      } catch (err) { say(err.message, 'warn'); }
+    });
+  });
+
+  $('printBtn').addEventListener('click', () => { if (guard()) window.print(); });
+
+  $('clearBtn').addEventListener('click', () => {
+    if (!confirm('Clear all the details you entered?')) return;
+    try { localStorage.removeItem(STORE_KEY); } catch (e) {}
+    FIELDS.forEach(f => {
+      const el = $(f);
+      if (el.tagName === 'SELECT') el.selectedIndex = 0; else el.value = '';
+    });
+    markMissing([]); say(''); render();
+  });
+
+  const panel = document.querySelector('.panel');
+  panel.addEventListener('input', () => {
+    render(); save();
+    if (note.className === 'warn') markMissing(missingFields());
+  });
+  panel.addEventListener('change', () => { render(); save(); });
+  window.addEventListener('resize', fit);
+
+  load();
+  render();
+  fit();
+  requestAnimationFrame(fit);
+})();
+</script>
+</body>
+</html>

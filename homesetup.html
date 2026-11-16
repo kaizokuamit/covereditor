@@ -1,0 +1,1019 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="color-scheme" content="light dark" />
+<meta name="theme-color" content="#eef2f9" media="(prefers-color-scheme: light)" />
+<meta name="theme-color" content="#080d16" media="(prefers-color-scheme: dark)" />
+<title>Cover Page Studio — Pick your tool</title>
+
+<link rel="icon" type="image/png" href="pngfavicon.png" />
+<link rel="apple-touch-icon" href="pngfavicon.png" />
+<link rel="shortcut icon" href="pngfavicon.png" />
+
+<!--
+  ============================================================
+   FILE SETUP  (same folder, nothing else to configure)
+  ============================================================
+       index.html              <- this file
+       fulloptimisable.html    <- advanced / fully customisable
+       simple.html             <- OUTR 2-minute generator
+       amitbrand.jpg           <- custom brand logo
+       pngfavicon.png          <- favicon / app icon
+
+   Clicking a card NAVIGATES to that file as its own page.
+   Nothing is embedded here, so this screen loads instantly.
+  ============================================================
+-->
+
+<style>
+/* ---------------------------------------------------------
+   THEME TOKENS
+--------------------------------------------------------- */
+:root{
+  --bg:#eef2f9;
+  --panel:#ffffff;
+  --surface-2:#f4f7fc;
+  --ink:#0b1220;
+  --muted:#55637a;
+  --line:#e2e8f2;
+  --line-strong:#cbd6e6;
+
+  --pro:#5b4bff;      --pro-soft:#ece9ff;
+  --simple:#0b8a67;   --simple-soft:#e0f6ee;
+  --star-ink:#92590a; --star-soft:#fff4d1;
+
+  --blob-a:#c3ccff;
+  --blob-b:#b6f0dd;
+  --grid-line:rgba(16,24,40,.055);
+
+  /* particle colour as "r,g,b" so the canvas can build rgba() */
+  --pt:91,75,255;
+
+  --shadow:0 10px 30px -14px rgba(16,24,40,.22);
+  --shadow-lift:0 30px 58px -26px rgba(16,24,40,.34);
+
+  --radius:22px;
+  --ease:cubic-bezier(.4,0,.2,1);
+}
+
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#080d16;
+    --panel:#111927;
+    --surface-2:#0b121c;
+    --ink:#e9f0fb;
+    --muted:#93a3ba;
+    --line:#1e2a3c;
+    --line-strong:#2b3a50;
+
+    --pro:#9b8dff;      --pro-soft:rgba(139,125,255,.16);
+    --simple:#3ddbaa;   --simple-soft:rgba(61,219,170,.14);
+    --star-ink:#f6c453; --star-soft:rgba(246,196,83,.14);
+
+    --blob-a:#2b2470;
+    --blob-b:#0b4636;
+    --grid-line:rgba(255,255,255,.045);
+
+    --pt:158,172,255;
+
+    --shadow:0 10px 30px -14px rgba(0,0,0,.6);
+    --shadow-lift:0 32px 62px -26px rgba(0,0,0,.78);
+  }
+}
+
+/* ---------------------------------------------------------
+   BASE
+--------------------------------------------------------- */
+*,*::before,*::after{ box-sizing:border-box; }
+html,body{ height:100%; margin:0; }
+
+body{
+  height:100dvh;
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+  position:relative;
+  color:var(--ink);
+  background:var(--bg);
+  font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,
+              "Helvetica Neue",Arial,sans-serif;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+  transition:background-color .4s var(--ease), color .4s var(--ease);
+}
+@supports not (height:100dvh){ body{ height:100vh; } }
+
+::selection{ background:var(--pro-soft); color:var(--ink); }
+
+/* ---------------------------------------------------------
+   AMBIENT BACKGROUND
+--------------------------------------------------------- */
+.bg{
+  position:fixed; inset:0;
+  z-index:0;
+  overflow:hidden;
+  pointer-events:none;
+}
+.blob{
+  position:absolute;
+  border-radius:50%;
+  filter:blur(72px);
+  opacity:.7;
+  will-change:transform;
+}
+.blob--a{
+  width:46vmax; height:46vmax;
+  left:-14vmax; top:-18vmax;
+  background:var(--blob-a);
+  animation:drift-a 26s ease-in-out infinite;
+}
+.blob--b{
+  width:42vmax; height:42vmax;
+  right:-14vmax; top:-10vmax;
+  background:var(--blob-b);
+  animation:drift-b 30s ease-in-out infinite;
+}
+.grid{
+  position:absolute; inset:0;
+  background-image:
+    linear-gradient(var(--grid-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+  background-size:46px 46px;
+  -webkit-mask-image:radial-gradient(circle at 50% 22%, #000 0%, transparent 78%);
+          mask-image:radial-gradient(circle at 50% 22%, #000 0%, transparent 78%);
+}
+
+@keyframes drift-a{
+  0%,100%{ transform:translate3d(0,0,0) scale(1); }
+  50%    { transform:translate3d(4vw,3vh,0) scale(1.08); }
+}
+@keyframes drift-b{
+  0%,100%{ transform:translate3d(0,0,0) scale(1); }
+  50%    { transform:translate3d(-4vw,4vh,0) scale(1.1); }
+}
+
+/* ---------------------------------------------------------
+   PARTICLE LAYER
+--------------------------------------------------------- */
+#particles{
+  position:fixed;
+  inset:0;
+  z-index:1;
+  display:block;
+  width:100%;
+  height:100%;
+  pointer-events:none;
+}
+
+/* ---------------------------------------------------------
+   HEADER
+--------------------------------------------------------- */
+.header{
+  position:relative;
+  z-index:2;
+  flex:0 0 auto;
+  width:100%;
+  max-width:860px;
+  margin:0 auto;
+  padding:30px 24px 24px;
+  text-align:center;
+}
+.header > *{ animation:rise .5s var(--ease) both; }
+.header > *:nth-child(1){ animation-delay:.02s; }
+.header > *:nth-child(2){ animation-delay:.07s; }
+.header > *:nth-child(3){ animation-delay:.11s; }
+.header > *:nth-child(4){ animation-delay:.15s; }
+
+/* --- brand / logo lockup --- */
+.brand{
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+  padding:5px 17px 5px 5px;
+  margin-bottom:18px;
+  border-radius:999px;
+  background:var(--panel);
+  border:1px solid var(--line);
+  box-shadow:var(--shadow);
+}
+.brand__logo{
+  position:relative;
+  flex:0 0 auto;
+  width:34px; height:34px;
+  display:grid;
+  place-items:center;
+  border-radius:11px;
+  overflow:hidden;
+  background:var(--surface-2);
+  border:1px solid var(--line);
+}
+.brand__logo img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+}
+.brand__name{
+  font-size:13px;
+  font-weight:800;
+  letter-spacing:-.012em;
+  color:var(--ink);
+  white-space:nowrap;
+}
+
+.header h1{
+  margin:0 0 12px;
+  font-size:clamp(24px, 3.6vw, 40px);
+  line-height:1.1;
+  letter-spacing:-.025em;
+  font-weight:800;
+}
+.header h1 em{
+  font-style:normal;
+  background:linear-gradient(100deg, var(--pro), var(--simple));
+  -webkit-background-clip:text;
+  background-clip:text;
+  color:transparent;
+}
+.header p{
+  margin:0 auto;
+  max-width:580px;
+  font-size:14.5px;
+  line-height:1.55;
+  color:var(--muted);
+}
+
+/* resume chip (shown only if the student has used a tool before) */
+.resume{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  margin-top:16px;
+  padding:8px 15px;
+  font-size:13px;
+  font-weight:700;
+  color:var(--ink);
+  text-decoration:none;
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:999px;
+  box-shadow:var(--shadow);
+  animation:rise .4s var(--ease) both;
+  transition:transform .18s var(--ease), border-color .18s var(--ease);
+}
+.resume[hidden]{ display:none; }
+.resume b{ color:var(--pro); font-weight:800; }
+.resume:hover{ transform:translateY(-1px); border-color:var(--line-strong); }
+.resume:focus-visible{ outline:3px solid var(--pro); outline-offset:3px; }
+
+/* ---------------------------------------------------------
+   CARD GRID
+--------------------------------------------------------- */
+.cards{
+  position:relative;
+  z-index:2;
+  flex:1 1 auto;
+  min-height:0;
+  width:100%;
+  max-width:1120px;
+  margin:0 auto;
+  padding:0 24px 18px;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  grid-auto-rows:minmax(0, 1fr);
+  gap:22px;
+  overflow-y:auto;
+  overscroll-behavior:contain;
+  scrollbar-width:none;
+}
+.cards::-webkit-scrollbar{ display:none; }
+
+/* ---------------------------------------------------------
+   CARD
+--------------------------------------------------------- */
+.card{
+  --accent:var(--pro);
+  --accent-soft:var(--pro-soft);
+  --cta-a:#6a5bff;
+  --cta-b:#4338ca;
+
+  position:relative;
+  isolation:isolate;
+  display:flex;
+  flex-direction:column;
+  min-height:0;
+  padding:28px;
+  border-radius:var(--radius);
+  background:var(--panel);
+  border:1px solid var(--line);
+  box-shadow:var(--shadow);
+  color:inherit;
+  text-decoration:none;
+  overflow:hidden;
+  -webkit-tap-highlight-color:transparent;
+  animation:rise .55s var(--ease) both;
+  transition:transform .28s var(--ease),
+             box-shadow .28s var(--ease),
+             border-color .28s var(--ease);
+}
+
+.card--simple{
+  --accent:var(--simple);
+  --accent-soft:var(--simple-soft);
+  --cta-a:#12b886;
+  --cta-b:#0a7a5b;
+  animation-delay:.06s;
+}
+.card--pro{ animation-delay:.13s; }
+
+.card::before{
+  content:"";
+  position:absolute;
+  inset:0 0 auto 0;
+  height:4px;
+  background:linear-gradient(90deg, var(--accent), transparent 78%);
+}
+.card::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:-1;
+  pointer-events:none;
+  opacity:0;
+  background:radial-gradient(340px circle at var(--mx,50%) var(--my,8%),
+             var(--accent-soft), transparent 72%);
+  transition:opacity .3s var(--ease);
+}
+
+@media (hover:hover){
+  .card:hover::after{ opacity:1; }
+  .card:hover{
+    transform:translateY(-5px);
+    box-shadow:var(--shadow-lift);
+    border-color:var(--line-strong);
+  }
+  .card:hover .card__icon{ transform:rotate(-7deg) scale(1.07); }
+  .card:hover .card__cta svg{ transform:translateX(4px); }
+  .card:hover .card__cta::after{ transform:translateX(130%); }
+}
+
+.card:focus-visible{
+  outline:3px solid var(--accent);
+  outline-offset:3px;
+}
+
+.card__top{
+  display:flex;
+  align-items:flex-start;
+  gap:12px;
+  margin-bottom:14px;
+}
+.card__icon{
+  flex:0 0 auto;
+  width:54px; height:54px;
+  display:grid;
+  place-items:center;
+  border-radius:15px;
+  background:var(--accent-soft);
+  color:var(--accent);
+  transition:transform .3s var(--ease);
+}
+.card__icon svg{ width:26px; height:26px; }
+
+.badges{
+  margin-left:auto;
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:flex-end;
+  gap:6px;
+}
+.badge{
+  font-size:10.5px;
+  font-weight:800;
+  letter-spacing:.07em;
+  text-transform:uppercase;
+  padding:5px 10px;
+  border-radius:999px;
+  white-space:nowrap;
+}
+.badge--star  { background:var(--star-soft);   color:var(--star-ink); }
+.badge--simple{ background:var(--simple-soft); color:var(--simple); }
+.badge--pro   { background:var(--pro-soft);    color:var(--pro); }
+
+.card__title{
+  margin:0 0 7px;
+  font-size:clamp(19px, 2.3vw, 25px);
+  line-height:1.15;
+  letter-spacing:-.018em;
+  font-weight:800;
+}
+.card__time{
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+  font-size:14.5px;
+  font-weight:800;
+  color:var(--accent);
+  margin-bottom:12px;
+}
+.card__time svg{ flex:0 0 auto; }
+
+.card__desc{
+  margin:0 0 16px;
+  font-size:14px;
+  line-height:1.55;
+  color:var(--muted);
+}
+
+.chips{
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+  margin-bottom:20px;
+}
+.chip{
+  font-size:11.5px;
+  font-weight:600;
+  color:var(--muted);
+  background:var(--surface-2);
+  border:1px solid var(--line);
+  padding:5px 9px;
+  border-radius:7px;
+}
+
+.card__cta{
+  margin-top:auto;
+  position:relative;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:9px;
+  width:100%;
+  padding:14px 20px;
+  border-radius:13px;
+  font-size:15px;
+  font-weight:800;
+  letter-spacing:-.01em;
+  color:#fff;
+  background:linear-gradient(135deg, var(--cta-a), var(--cta-b));
+  overflow:hidden;
+}
+.card__cta svg{ transition:transform .25s var(--ease); }
+.card__cta::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(100deg, transparent 32%, rgba(255,255,255,.32) 50%, transparent 68%);
+  transform:translateX(-130%);
+  transition:transform .7s var(--ease);
+  pointer-events:none;
+}
+
+/* ---------------------------------------------------------
+   FOOTER
+--------------------------------------------------------- */
+.foot{
+  position:relative;
+  z-index:2;
+  flex:0 0 auto;
+  padding:0 20px 16px;
+  text-align:center;
+  font-size:12.5px;
+  color:var(--muted);
+  animation:rise .5s var(--ease) .16s both;
+}
+kbd{
+  font:inherit;
+  font-size:11px;
+  font-weight:800;
+  padding:2px 6px;
+  border-radius:6px;
+  border:1px solid var(--line-strong);
+  background:var(--panel);
+  color:var(--ink);
+  box-shadow:0 1px 0 var(--line-strong);
+}
+@media (hover:none){
+  .foot .keys{ display:none; }
+}
+
+/* ---------------------------------------------------------
+   ENTRANCE
+--------------------------------------------------------- */
+@keyframes rise{
+  from{ opacity:0; transform:translateY(14px); }
+  to  { opacity:1; transform:none; }
+}
+
+/* ---------------------------------------------------------
+   RESPONSIVE
+--------------------------------------------------------- */
+@media (max-width:820px){
+  .header{ padding:16px 16px 14px; }
+  .brand{ margin-bottom:12px; padding:4px 14px 4px 4px; }
+  .brand__logo{ width:29px; height:29px; border-radius:9px; }
+  .brand__name{ font-size:12px; }
+  .header h1{ font-size:clamp(20px, 5.4vw, 27px); margin-bottom:8px; }
+  .header p{ font-size:13px; line-height:1.45; max-width:520px; }
+  .resume{ margin-top:10px; font-size:12px; padding:7px 12px; }
+
+  .cards{
+    grid-template-columns:1fr;
+    grid-auto-rows:auto;
+    gap:12px;
+    padding:0 14px 12px;
+  }
+  .card{ padding:16px 18px; border-radius:16px; }
+  .card::before{ height:3px; }
+  .card__top{ margin-bottom:9px; gap:10px; }
+  .card__icon{ width:40px; height:40px; border-radius:11px; }
+  .card__icon svg{ width:20px; height:20px; }
+  .card__title{ font-size:17px; margin-bottom:4px; }
+  .card__time{ font-size:13px; margin-bottom:7px; }
+  .card__desc{ font-size:12.5px; line-height:1.42; margin-bottom:11px; }
+  .chips{ display:none; }
+  .card__cta{ padding:11px 16px; font-size:13.5px; border-radius:10px; }
+  .badge{ font-size:9.5px; padding:4px 8px; }
+  .foot{ font-size:11px; padding:0 12px 10px; }
+}
+
+@media (max-width:430px){
+  .header p{ display:none; }
+  .card__desc{ display:none; }
+  .badge--simple, .badge--pro{ display:none; }
+}
+
+@media (max-height:640px) and (min-width:821px){
+  .header{ padding:16px 24px 14px; }
+  .brand{ margin-bottom:10px; }
+  .header h1{ font-size:clamp(22px,3vw,30px); margin-bottom:6px; }
+  .header p{ font-size:13px; }
+  .card{ padding:20px; }
+  .card__desc{ margin-bottom:10px; }
+}
+
+/* ---------------------------------------------------------
+   REDUCED MOTION
+--------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{
+    animation-duration:.001ms !important;
+    animation-iteration-count:1 !important;
+    transition-duration:.001ms !important;
+  }
+  .blob{ animation:none !important; }
+}
+
+/* ---------------------------------------------------------
+   CROSS-DOCUMENT VIEW TRANSITIONS (Chrome 126+; ignored elsewhere)
+--------------------------------------------------------- */
+@view-transition{ navigation:auto; }
+::view-transition-old(root),
+::view-transition-new(root){ animation-duration:.22s; }
+</style>
+</head>
+
+<body>
+
+<!-- ambient background: blobs + grid -->
+<div class="bg" aria-hidden="true">
+  <span class="blob blob--a"></span>
+  <span class="blob blob--b"></span>
+  <span class="grid"></span>
+</div>
+
+<!-- particle constellation -->
+<canvas id="particles" aria-hidden="true"></canvas>
+
+<!-- ================= HEADER ================= -->
+<header class="header">
+
+  <div class="brand">
+    <span class="brand__logo">
+      <img src="denji.jpg" alt="Amit Brand Logo" />
+    </span>
+    <span class="brand__name">Cover Page Studio</span>
+  </div>
+
+  <h1>Which cover page <em>do you need?</em></h1>
+  <p>Most students finish with OUTR Quick Cover in under 2 minutes.
+     Open the advanced studio only if you need full design control.</p>
+
+  <a class="resume" id="resume" href="#" hidden>
+    ↩ Last time you used <b id="resume-name"></b> — open it
+  </a>
+</header>
+
+<!-- ================= CHOICES ================= -->
+<main class="cards">
+
+  <!-- SIMPLE / OUTR — first, recommended -->
+  <a class="card card--simple" href="simple.html"
+     data-tool="simple" data-name="OUTR Quick Cover"
+     aria-label="Open OUTR Quick Cover, finishes in under 2 minutes">
+    <div class="card__top">
+      <span class="card__icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="currentColor">
+          <path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z"/>
+        </svg>
+      </span>
+      <div class="badges">
+        <span class="badge badge--star">★ Start here</span>
+        <span class="badge badge--simple">OUTR only</span>
+      </div>
+    </div>
+
+    <h2 class="card__title">OUTR Quick Cover</h2>
+
+    <div class="card__time">
+      <svg viewBox="0 0 24 24" width="15" height="15" fill="none"
+           stroke="currentColor" stroke-width="2" stroke-linecap="round"
+           aria-hidden="true">
+        <circle cx="12" cy="12" r="9"/>
+        <path d="M12 7.4V12l3.1 1.9"/>
+      </svg>
+      Under 2 minutes
+    </div>
+
+    <p class="card__desc">
+      Four fields, one click, download. Built exactly for the OUTR
+      cover-page format — no guessing the layout.
+    </p>
+
+    <div class="chips">
+      <span class="chip">OUTR format</span>
+      <span class="chip">No sign-up</span>
+      <span class="chip">Instant PDF</span>
+    </div>
+
+    <span class="card__cta">
+      Start in 2 minutes
+      <svg viewBox="0 0 24 24" width="17" height="17" fill="none"
+           stroke="currentColor" stroke-width="2.2" stroke-linecap="round"
+           stroke-linejoin="round" aria-hidden="true">
+        <path d="M4 12h15"/><path d="m13 6 6 6-6 6"/>
+      </svg>
+    </span>
+  </a>
+
+  <!-- ADVANCED -->
+  <a class="card card--pro" href="fulloptimisable.html"
+     data-tool="pro" data-name="Advanced Cover Studio"
+     aria-label="Open Advanced Cover Studio, takes 5 to 10 minutes">
+    <div class="card__top">
+      <span class="card__icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+          <path d="M4 7h8M16.5 7H20M4 17h3M11.5 17H20"/>
+          <circle cx="14.3" cy="7" r="2.2"/>
+          <circle cx="9.3" cy="17" r="2.2"/>
+        </svg>
+      </span>
+      <div class="badges">
+        <span class="badge badge--pro">Full control</span>
+      </div>
+    </div>
+
+    <h2 class="card__title">Advanced Cover Studio</h2>
+
+    <div class="card__time">
+      <svg viewBox="0 0 24 24" width="15" height="15" fill="none"
+           stroke="currentColor" stroke-width="2" stroke-linecap="round"
+           aria-hidden="true">
+        <circle cx="12" cy="12" r="9"/>
+        <path d="M12 7.4V12l3.1 1.9"/>
+      </svg>
+      5–10 minutes
+    </div>
+
+    <p class="card__desc">
+      Margins, fonts, logos, borders, live preview and PDF export.
+      For when you want the cover exactly right.
+    </p>
+
+    <div class="chips">
+      <span class="chip">Custom fonts</span>
+      <span class="chip">Logo upload</span>
+      <span class="chip">Border styles</span>
+      <span class="chip">PDF export</span>
+    </div>
+
+    <span class="card__cta">
+      Open advanced builder
+      <svg viewBox="0 0 24 24" width="17" height="17" fill="none"
+           stroke="currentColor" stroke-width="2.2" stroke-linecap="round"
+           stroke-linejoin="round" aria-hidden="true">
+        <path d="M4 12h15"/><path d="m13 6 6 6-6 6"/>
+      </svg>
+    </span>
+  </a>
+
+</main>
+
+<footer class="foot">
+  <span class="keys">
+    Press <kbd>1</kbd> for Quick · <kbd>2</kbd> for Advanced ·
+  </span>
+  Browser <kbd>←</kbd> brings you back here anytime.
+</footer>
+
+<script>
+/* =========================================================
+   1) PARTICLE CONSTELLATION
+   - small particle count, DPR capped, rAF throttled on weak
+     devices, pauses on hidden tab, honours reduced motion
+   ========================================================= */
+(function () {
+  "use strict";
+
+  var canvas = document.getElementById("particles");
+  if (!canvas || !canvas.getContext) return;
+
+  var ctx = canvas.getContext("2d", { alpha: true });
+  if (!ctx) return;
+
+  var reduce    = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var canHover  = window.matchMedia("(hover: hover)").matches;
+  var lowPower  = (navigator.hardwareConcurrency || 8) <= 4;
+
+  var W = 0, H = 0, DPR = 1;
+  var parts = [];
+  var raf = 0, lastT = 0;
+
+  var rgb   = "91,75,255";
+  var LINK  = 132, LINK2 = LINK * LINK;
+  var CUR   = 170, CUR2  = CUR * CUR;
+  var MIN_DELTA = lowPower ? 33 : 0;   /* ~30fps on weak devices */
+  var MAX_PARTS = lowPower ? 46 : 78;
+
+  var mx = -9999, my = -9999, tx = -9999, ty = -9999;
+
+  function readColor() {
+    var v = getComputedStyle(document.documentElement).getPropertyValue("--pt");
+    if (v) rgb = v.trim();
+  }
+
+  function seed() {
+    var n = Math.round((W * H) / 22000);
+    if (n > MAX_PARTS) n = MAX_PARTS;
+    if (n < 26) n = 26;
+    if (W < 760) n = Math.round(n * 0.72);   /* lighter on phones */
+
+    parts.length = 0;
+    for (var i = 0; i < n; i++) {
+      parts.push({
+        x: Math.random() * W,
+        y: Math.random() * H,
+        vx: (Math.random() - 0.5) * 0.42,
+        vy: (Math.random() - 0.5) * 0.42,
+        r: 0.7 + Math.random() * 1.5
+      });
+    }
+  }
+
+  function resize() {
+    DPR = Math.min(window.devicePixelRatio || 1, 1.75);
+    W = window.innerWidth;
+    H = window.innerHeight;
+
+    canvas.width  = Math.round(W * DPR);
+    canvas.height = Math.round(H * DPR);
+    canvas.style.width  = W + "px";
+    canvas.style.height = H + "px";
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+
+    seed();
+    if (reduce) drawStatic();
+  }
+
+  function drawStatic() {
+    ctx.clearRect(0, 0, W, H);
+    ctx.fillStyle = "rgba(" + rgb + ",.45)";
+    for (var i = 0; i < parts.length; i++) {
+      var p = parts[i];
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, 6.2832);
+      ctx.fill();
+    }
+  }
+
+  function frame(t) {
+    raf = requestAnimationFrame(frame);
+
+    if (MIN_DELTA && t - lastT < MIN_DELTA) return;
+    lastT = t;
+
+    ctx.clearRect(0, 0, W, H);
+
+    var i, j, p, q, dx, dy, d2, a;
+
+    /* move + wrap */
+    for (i = 0; i < parts.length; i++) {
+      p = parts[i];
+      p.x += p.vx;
+      p.y += p.vy;
+      if (p.x < -24) p.x = W + 24;
+      else if (p.x > W + 24) p.x = -24;
+      if (p.y < -24) p.y = H + 24;
+      else if (p.y > H + 24) p.y = -24;
+    }
+
+    /* particle → particle links */
+    ctx.lineWidth = 1;
+    for (i = 0; i < parts.length; i++) {
+      p = parts[i];
+      for (j = i + 1; j < parts.length; j++) {
+        q = parts[j];
+        dx = p.x - q.x;
+        dy = p.y - q.y;
+        d2 = dx * dx + dy * dy;
+        if (d2 < LINK2) {
+          a = (1 - Math.sqrt(d2) / LINK) * 0.34;
+          ctx.strokeStyle = "rgba(" + rgb + "," + a.toFixed(3) + ")";
+          ctx.beginPath();
+          ctx.moveTo(p.x, p.y);
+          ctx.lineTo(q.x, q.y);
+          ctx.stroke();
+        }
+      }
+    }
+
+    /* cursor → particle links (hover devices only) */
+    if (canHover && tx > -999) {
+      mx += (tx - mx) * 0.14;
+      my += (ty - my) * 0.14;
+      for (i = 0; i < parts.length; i++) {
+        p = parts[i];
+        dx = p.x - mx;
+        dy = p.y - my;
+        d2 = dx * dx + dy * dy;
+        if (d2 < CUR2) {
+          a = (1 - Math.sqrt(d2) / CUR) * 0.5;
+          ctx.strokeStyle = "rgba(" + rgb + "," + a.toFixed(3) + ")";
+          ctx.beginPath();
+          ctx.moveTo(mx, my);
+          ctx.lineTo(p.x, p.y);
+          ctx.stroke();
+        }
+      }
+    }
+
+    /* dots */
+    ctx.fillStyle = "rgba(" + rgb + ",.52)";
+    for (i = 0; i < parts.length; i++) {
+      p = parts[i];
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, 6.2832);
+      ctx.fill();
+    }
+  }
+
+  function start() {
+    if (!raf) raf = requestAnimationFrame(frame);
+  }
+  function stop() {
+    if (raf) { cancelAnimationFrame(raf); raf = 0; }
+  }
+
+  /* ---------- boot ---------- */
+  readColor();
+  resize();
+
+  var rt;
+  window.addEventListener("resize", function () {
+    clearTimeout(rt);
+    rt = setTimeout(resize, 180);
+  }, { passive: true });
+
+  document.addEventListener("visibilitychange", function () {
+    if (document.hidden) stop();
+    else if (!reduce) start();
+  });
+
+  var mq = window.matchMedia("(prefers-color-scheme: dark)");
+  function onTheme() {
+    readColor();
+    if (reduce) drawStatic();
+  }
+  if (mq.addEventListener) mq.addEventListener("change", onTheme);
+  else if (mq.addListener) mq.addListener(onTheme);
+
+  if (canHover && !reduce) {
+    window.addEventListener("pointermove", function (e) {
+      tx = e.clientX;
+      ty = e.clientY;
+      if (mx < -999) { mx = tx; my = ty; }
+    }, { passive: true });
+    window.addEventListener("pointerleave", function () {
+      tx = -999; ty = -999;
+    }, { passive: true });
+  }
+
+  if (reduce) drawStatic();
+  else start();
+})();
+
+
+/* =========================================================
+   2) CHOICE SCREEN LOGIC
+   ========================================================= */
+(function () {
+  "use strict";
+
+  var KEY = "cps:last-tool";
+  var cards = Array.prototype.slice.call(document.querySelectorAll(".card"));
+  var resume = document.getElementById("resume");
+  var resumeName = document.getElementById("resume-name");
+
+  var store = null;
+  try { store = window.localStorage; } catch (e) { /* private mode */ }
+
+  /* ---------- prefetch (only on real intent → zero upfront cost) ---------- */
+  var prefetched = Object.create(null);
+
+  function prefetch(href) {
+    if (!href || prefetched[href]) return;
+    prefetched[href] = true;
+    var link = document.createElement("link");
+    link.rel = "prefetch";
+    link.as = "document";
+    link.href = href;
+    document.head.appendChild(link);
+  }
+
+  /* ---------- wire up cards ---------- */
+  var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var canHover = window.matchMedia("(hover: hover)").matches;
+
+  cards.forEach(function (card) {
+    var href = card.getAttribute("href");
+
+    card.addEventListener("click", function () {
+      try { store && store.setItem(KEY, card.dataset.tool); } catch (e) {}
+    });
+
+    ["pointerenter", "focus", "touchstart"].forEach(function (evt) {
+      card.addEventListener(evt, function () { prefetch(href); },
+        { passive: true, once: true });
+    });
+
+    if (canHover && !reduced) {
+      var rafId = 0, px = 0, py = 0;
+      card.addEventListener("pointermove", function (e) {
+        px = e.clientX;
+        py = e.clientY;
+        if (rafId) return;
+        rafId = requestAnimationFrame(function () {
+          rafId = 0;
+          var r = card.getBoundingClientRect();
+          card.style.setProperty("--mx", ((px - r.left) / r.width  * 100) + "%");
+          card.style.setProperty("--my", ((py - r.top)  / r.height * 100) + "%");
+        });
+      }, { passive: true });
+    }
+  });
+
+  /* ---------- keyboard shortcuts: 1 = quick, 2 = advanced ---------- */
+  document.addEventListener("keydown", function (e) {
+    var t = e.target;
+    if (t && (t.tagName === "INPUT" || t.tagName === "TEXTAREA" || t.isContentEditable)) return;
+    if (e.metaKey || e.ctrlKey || e.altKey || e.repeat) return;
+
+    if (e.key === "1" || e.key === "2") {
+      var target = document.querySelector(e.key === "1" ? ".card--simple" : ".card--pro");
+      if (target) {
+        e.preventDefault();
+        target.click();
+      }
+    }
+  });
+
+  /* ---------- "last used" resume chip ---------- */
+  var last = null;
+  try { last = store && store.getItem(KEY); } catch (e) {}
+
+  if (last) {
+    var target = document.querySelector('.card[data-tool="' + last + '"]');
+    if (target && resume && resumeName) {
+      resumeName.textContent = target.dataset.name;
+      resume.href = target.getAttribute("href");
+      resume.hidden = false;
+    }
+  }
+
+  /* ---------- idle-prefetch the recommended page ---------- */
+  function idle(fn) {
+    if ("requestIdleCallback" in window) {
+      requestIdleCallback(fn, { timeout: 2500 });
+    } else {
+      setTimeout(fn, 1400);
+    }
+  }
+  idle(function () { prefetch("simple.html"); });
+})();
+</script>
+
+</body>
+</html>
